@@ -1,0 +1,52 @@
+rupt
+# rupt_game: pygame-like API (text/console backend)
+
+fn init():
+    print("rupt_game init")
+    return true
+
+fn quit():
+    print("rupt_game quit")
+    return true
+
+fn create_window(width, height, title):
+    print("window", width, "x", height, title)
+    return {"width": width, "height": height, "title": title}
+
+fn fill(screen, color):
+    print("fill", color)
+    return true
+
+fn flip(screen):
+    print("flip")
+    return true
+
+fn draw_rect(screen, color, x, y, w, h):
+    print("rect", color, x, y, w, h)
+    return true
+
+fn draw_circle(screen, color, x, y, r):
+    print("circle", color, x, y, r)
+    return true
+
+fn draw_line(screen, color, x1, y1, x2, y2):
+    print("line", color, x1, y1, x2, y2)
+    return true
+
+fn event_get():
+    return []
+
+fn key_pressed(key):
+    return false
+
+fn clock_tick(fps):
+    sleep_ms(1000 // fps)
+    return true
+
+fn load_image(path):
+    print("load image", path)
+    return {"path": path}
+
+fn blit(screen, img, x, y):
+    print("blit", x, y)
+    return true

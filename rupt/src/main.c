@@ -1,5 +1,6 @@
 #include "rupt.h"
 #include <stdio.h>
+#include <windows.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -44,6 +45,8 @@ static void repl(Env *env) {
 }
 
 int main(int argc, char **argv) {
+    SetConsoleOutputCP(65001);
+    SetConsoleCP(65001);
     Env *env = env_new(NULL);
     // builtins
     // print is handled in eval by name; but store a placeholder? Not needed.
@@ -70,3 +73,4 @@ int main(int argc, char **argv) {
     fprintf(stderr, "Использование: rupt [run] <file.rupt> / Usage: rupt [run] <file.rupt>\n");
     return 1;
 }
+

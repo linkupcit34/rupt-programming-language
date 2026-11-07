@@ -250,6 +250,7 @@ brick info <name>
 Packages live in `bricks/`, registry in `registry/`.  
 Example brick: `rupt_timer`.
 
+Available Bricks: rupt_timer, rupt_math, rupt_strings, rupt_lists, rupt_maps, rupt_random, rupt_files, rupt_json, rupt_http, rupt_os, rupt_path, rupt_crypto, rupt_hash, rupt_regex, rupt_datetime, rupt_collections, rupt_itertools, rupt_functools, rupt_logging, rupt_terminal, rupt_network, rupt_process, rupt_testing, rupt_async.
 ### Errors
 
 Professional output: error type, file, line, column, stack trace, suggestions.
@@ -263,3 +264,4 @@ Rupt grows thanks to contributors. Any contribution (code, docs, tests, ideas) h
 ```text
 build.bat
 ```
+

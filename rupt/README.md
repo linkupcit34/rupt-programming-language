@@ -118,6 +118,28 @@ Philosophy: simple for beginners, powerful for real applications.
 - Modular architecture: compiler / runtime / std / bricks.
 - Extensible: Bricks, native modules, JIT-ready design.
 
+## Installation (Windows)
+
+### Option 1: installer
+
+1. Download installer/installer.exe.
+2. Run the installer.
+3. Restart the terminal.
+
+The installer copies files to %LOCALAPPDATA%\Rupt and adds in to PATH.
+
+### Option 2: manual
+
+1. Copy upt.exe and rick.exe to a folder, e.g. C:\Rupt\bin.
+2. Copy std, egistry, ricks folders next to it.
+3. Add C:\Rupt\bin to PATH.
+
+Check:
+
+`	ext
+rupt program.rupt
+`
+
 ### Run
 
 ```text

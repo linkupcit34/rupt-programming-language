@@ -88,7 +88,7 @@ static Value *eval_expr(ASTNode *node, Env *env) {
         case N_IDENT: {
             Value *v = env_get(env, node->sval);
             if (!v) {
-                if (strcmp(node->sval,"print")==0 || strcmp(node->sval,"range")==0 || strcmp(node->sval,"len")==0 || strcmp(node->sval,"int")==0 || strcmp(node->sval,"float")==0 || strcmp(node->sval,"str")==0 || strcmp(node->sval,"bool")==0 || strcmp(node->sval,"list")==0 || strcmp(node->sval,"input")==0 || strcmp(node->sval,"time_now")==0 || strcmp(node->sval,"sleep_ms")==0 || strcmp(node->sval,"visible")==0) {
+                if (strcmp(node->sval,"print")==0 || strcmp(node->sval,"range")==0 || strcmp(node->sval,"len")==0 || strcmp(node->sval,"int")==0 || strcmp(node->sval,"float")==0 || strcmp(node->sval,"str")==0 || strcmp(node->sval,"bool")==0 || strcmp(node->sval,"list")==0 || strcmp(node->sval,"input")==0 || strcmp(node->sval,"time_now")==0 || strcmp(node->sval,"sleep_ms")==0 || strcmp(node->sval,"visible")==0 || strcmp(node->sval,"toilet")==0) {
                     return val_null();
                 }
                 fprintf(stderr,"Ошибка имени: %s не определено / NameError: %s is not defined\n", node->sval);
@@ -334,6 +334,8 @@ static Value *eval_expr(ASTNode *node, Env *env) {
                     }
                     printf("\n");
                     result = val_null();
+                } else if (strcmp(fname,"toilet")==0) {
+                    exit(0);
                 } else if (strcmp(fname,"len")==0) {
                     long long l=0;
                     if (argc>0 && args[0]) {
@@ -1133,6 +1135,7 @@ int exec_block(ASTNode *block, Env *env, Frame *fr) {
     }
     return exec_stmt(block, env, fr);
 }
+
 
 
 

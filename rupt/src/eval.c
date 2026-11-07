@@ -11,7 +11,6 @@ static Frame *FR = NULL; // current frame pointer passed around
 // forward
 static Value *eval_expr(ASTNode *node, Env *env);
 static int exec_stmt(ASTNode *node, Env *env, Frame *fr);
-int exec_block(ASTNode *block, Env *env, Frame *fr);
 
 static Value *call_function(Function *fn, Value **args, int argc, Env *callEnv) {
     Env *newenv = env_new(fn->closure ? fn->closure : callEnv);
@@ -91,7 +90,7 @@ static Value *eval_expr(ASTNode *node, Env *env) {
                 if (strcmp(node->sval,"print")==0 || strcmp(node->sval,"range")==0 || strcmp(node->sval,"len")==0 || strcmp(node->sval,"int")==0 || strcmp(node->sval,"float")==0 || strcmp(node->sval,"str")==0 || strcmp(node->sval,"bool")==0 || strcmp(node->sval,"list")==0 || strcmp(node->sval,"input")==0 || strcmp(node->sval,"time_now")==0 || strcmp(node->sval,"sleep_ms")==0 || strcmp(node->sval,"visible")==0 || strcmp(node->sval,"toilet")==0) {
                     return val_null();
                 }
-                fprintf(stderr,"Ошибка имени: %s не определено / NameError: %s is not defined\n", node->sval);
+                fprintf(stderr, "NameError: %s is not defined\n", node->sval);
                 if (FR) { FR->signal=SIG_EXCEPTION; FR->exc=val_str("NameError"); }
                 return NULL;
             }
@@ -405,7 +404,7 @@ static Value *eval_expr(ASTNode *node, Env *env) {
                     if (fv && fv->type==VAL_FUNC) {
                         result = call_function(fv->as.func, args, argc, env);
                     } else {
-                        fprintf(stderr,"Ошибка имени: %s не определено / NameError: %s is not defined\n", fname);
+                        fprintf(stderr, "NameError: %s is not defined\n", fname);
                         if (FR) { FR->signal=SIG_EXCEPTION; FR->exc=val_str("NameError"); }
                         result = NULL;
                     }
@@ -427,8 +426,8 @@ static Value *eval_expr(ASTNode *node, Env *env) {
                 if (i < 0) i += t->as.list.count;
                 if (i >= 0 && i < t->as.list.count) res = val_retain(t->as.list.items[i]);
                 else {
-                    fprintf(stderr,"Ошибка индекса / IndexError\n");
-                    if (FR) { FR->signal=SIG_EXCEPTION; FR->exc=val_str("Ошибка индекса / IndexError"); }
+                    fprintf(stderr, "IndexError\n");
+                    if (FR) { FR->signal=SIG_EXCEPTION; FR->exc=val_str("IndexError"); }
                 }
             } else if (t && t->type==VAL_STR) {
                 long long i = (idx->type==VAL_INT)?idx->as.integer:(long long)idx->as.floating;
@@ -437,8 +436,8 @@ static Value *eval_expr(ASTNode *node, Env *env) {
                     char buf[2] = { t->as.string[i], 0 };
                     res = val_str(buf);
                 } else {
-                    fprintf(stderr,"Ошибка индекса / IndexError\n");
-                    if (FR) { FR->signal=SIG_EXCEPTION; FR->exc=val_str("Ошибка индекса / IndexError"); }
+                    fprintf(stderr, "IndexError\n");
+                    if (FR) { FR->signal=SIG_EXCEPTION; FR->exc=val_str("IndexError"); }
                 }
             } else if (t && t->type==VAL_MAP) {
                 if (idx->type==VAL_STR) {
@@ -1052,7 +1051,7 @@ static int exec_stmt(ASTNode *node, Env *env, Frame *fr) {
                 f = fopen(filepath,"r");
             }
             if (!f) {
-                fprintf(stderr,"Ошибка импорта: модуль %s не найден / ImportError: cannot find module %s\n", node->module);
+                fprintf(stderr, "ImportError: cannot find module %s\n", node->module);
                 if (FR) { FR->signal=SIG_EXCEPTION; FR->exc=val_str("ImportError"); }
                 return SIG_EXCEPTION;
             }

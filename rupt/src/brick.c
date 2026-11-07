@@ -10,18 +10,32 @@ static int is_dir(const char *p) {
     return S_ISDIR(st.st_mode);
 }
 
+static const char *bricks_root(void) {
+    if (is_dir("bricks")) return "bricks";
+    if (is_dir("rupt/bricks")) return "rupt/bricks";
+    return "bricks";
+}
+
+static const char *registry_root(void) {
+    if (is_dir("registry")) return "registry";
+    if (is_dir("rupt/registry")) return "rupt/registry";
+    return "registry";
+}
+
 static void ensure_dir(const char *p) {
     if (!is_dir(p)) mkdir(p);
 }
 
 static void cmd_list(void) {
-    system("dir /b bricks 2>nul");
+    char cmd[512];
+    snprintf(cmd, 512, "dir /b %s 2>nul", bricks_root());
+    system(cmd);
 }
 
 static void cmd_install(const char *name) {
     char src[512], dst[512];
-    snprintf(src, 512, "registry/%s", name);
-    snprintf(dst, 512, "bricks/%s", name);
+    snprintf(src, 512, "%s/%s", registry_root(), name);
+    snprintf(dst, 512, "%s/%s", bricks_root(), name);
     if (!is_dir(src)) {
         printf("Brick не найден в реестре / Brick not found in registry: %s\n", name);
         return;
@@ -30,7 +44,7 @@ static void cmd_install(const char *name) {
         printf("Brick уже установлен / Brick already installed: %s\n", name);
         return;
     }
-    ensure_dir("bricks");
+    ensure_dir(bricks_root());
     char cmd[1024];
     snprintf(cmd, 1024, "xcopy /e /i /q %s %s >nul", src, dst);
     system(cmd);
@@ -39,7 +53,7 @@ static void cmd_install(const char *name) {
 
 static void cmd_remove(const char *name) {
     char path[512];
-    snprintf(path, 512, "bricks/%s", name);
+    snprintf(path, 512, "%s/%s", bricks_root(), name);
     if (!is_dir(path)) {
         printf("Brick не установлен / Brick not installed: %s\n", name);
         return;
@@ -52,16 +66,16 @@ static void cmd_remove(const char *name) {
 
 static void cmd_search(const char *name) {
     char cmd[512];
-    snprintf(cmd, 512, "dir /b registry 2>nul | findstr %s", name);
+    snprintf(cmd, 512, "dir /b %s 2>nul | findstr %s", registry_root(), name);
     system(cmd);
 }
 
 static void cmd_info(const char *name) {
     char path[512];
-    snprintf(path, 512, "bricks/%s/rupt.toml", name);
+    snprintf(path, 512, "%s/%s/rupt.toml", bricks_root(), name);
     FILE *f = fopen(path, "r");
     if (!f) {
-        snprintf(path, 512, "registry/%s/rupt.toml", name);
+        snprintf(path, 512, "%s/%s/rupt.toml", registry_root(), name);
         f = fopen(path, "r");
     }
     if (!f) { printf("Нет информации / No info: %s\n", name); return; }

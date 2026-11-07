@@ -1,5 +1,7 @@
 #include "rupt.h"
 #include <setjmp.h>
+#include <time.h>
+#include <windows.h>
 
 // control flow signals
 enum { SIG_NONE, SIG_RETURN, SIG_BREAK, SIG_CONTINUE, SIG_EXCEPTION };
@@ -86,7 +88,7 @@ static Value *eval_expr(ASTNode *node, Env *env) {
         case N_IDENT: {
             Value *v = env_get(env, node->sval);
             if (!v) {
-                if (strcmp(node->sval,"print")==0 || strcmp(node->sval,"range")==0 || strcmp(node->sval,"len")==0 || strcmp(node->sval,"int")==0 || strcmp(node->sval,"float")==0 || strcmp(node->sval,"str")==0 || strcmp(node->sval,"bool")==0 || strcmp(node->sval,"list")==0 || strcmp(node->sval,"input")==0) {
+                if (strcmp(node->sval,"print")==0 || strcmp(node->sval,"range")==0 || strcmp(node->sval,"len")==0 || strcmp(node->sval,"int")==0 || strcmp(node->sval,"float")==0 || strcmp(node->sval,"str")==0 || strcmp(node->sval,"bool")==0 || strcmp(node->sval,"list")==0 || strcmp(node->sval,"input")==0 || strcmp(node->sval,"time_now")==0 || strcmp(node->sval,"sleep_ms")==0) {
                     return val_null();
                 }
                 fprintf(stderr,"Ошибка имени: %s не определено / NameError: %s is not defined\n", node->sval);
@@ -389,6 +391,12 @@ static Value *eval_expr(ASTNode *node, Env *env) {
                         size_t l=strlen(buf); if (l>0 && buf[l-1]=='\n') buf[l-1]=0;
                         result = val_str(buf);
                     } else result = val_str("");
+                } else if (strcmp(fname,"time_now")==0) {
+                    result = val_int((long long)time(NULL) * 1000LL);
+                } else if (strcmp(fname,"sleep_ms")==0) {
+                    long long ms = argc>0 ? (args[0]->type==VAL_INT?args[0]->as.integer:(long long)args[0]->as.floating) : 0;
+                    Sleep((DWORD)ms);
+                    result = val_null();
                 } else {
                     // user-defined function by name in env
                     Value *fv = env_get(env, fname);
@@ -1038,6 +1046,10 @@ static int exec_stmt(ASTNode *node, Env *env, Frame *fr) {
                 f = fopen(filepath,"r");
             }
             if (!f) {
+                snprintf(filepath,512,"bricks/%s/%s.rupt", node->module, node->module);
+                f = fopen(filepath,"r");
+            }
+            if (!f) {
                 fprintf(stderr,"Ошибка импорта: модуль %s не найден / ImportError: cannot find module %s\n", node->module);
                 if (FR) { FR->signal=SIG_EXCEPTION; FR->exc=val_str("ImportError"); }
                 return SIG_EXCEPTION;
@@ -1121,4 +1133,5 @@ int exec_block(ASTNode *block, Env *env, Frame *fr) {
     }
     return exec_stmt(block, env, fr);
 }
+
 

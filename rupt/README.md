@@ -168,6 +168,8 @@ rupt program.rupt
 
 ### Run
 
+All .rupt files must start with the word upt.
+
 ```text
 rupt program.rupt
 rupt run program.rupt

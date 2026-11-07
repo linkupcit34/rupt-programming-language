@@ -1,3 +1,4 @@
+rupt
 fn sqrt(x):
     return x ** 0.5
 
@@ -16,3 +17,4 @@ fn abs(x):
 
 fn pow(a, b):
     return a ** b
+

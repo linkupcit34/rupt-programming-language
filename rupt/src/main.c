@@ -17,6 +17,12 @@ static char *read_file(const char *path) {
 }
 
 static void run_source(const char *src, Env *env) {
+    const char *p = src;
+    while (*p == ' ' || *p == '\t' || *p == '\n' || *p == '\r') p++;
+    if (strncmp(p, "rupt", 4) != 0 || (p[4] != ' ' && p[4] != '\t' && p[4] != '\n' && p[4] != '\r' && p[4] != 0)) {
+        fprintf(stderr, "??????: ???? ?????? ?????????? ?? ????? 'rupt' / Error: file must start with 'rupt'\n");
+        return;
+    }
     ASTNode *prog = parse_source(src);
     Frame fr; fr.signal = 0; fr.retval = NULL; fr.exc = NULL;
     exec_block(prog, env, &fr);

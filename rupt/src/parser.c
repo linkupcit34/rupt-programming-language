@@ -35,6 +35,9 @@ static ASTNode *parse_program() {
     ASTNode *p = ast_new(N_PROGRAM);
     // ensure body array
     p->body_cap=16; p->body=calloc(16,sizeof(ASTNode*));
+    while (cur()->type == T_NEWLINE) adv();
+    if (cur()->type == T_KEYWORD && cur()->text && strcmp(cur()->text,"rupt")==0) adv();
+    while (cur()->type == T_NEWLINE) adv();
     while (cur()->type != T_EOF) {
         if (cur()->type == T_NEWLINE) { adv(); continue; }
         if (cur()->type == T_DEDENT) { adv(); continue; }
@@ -650,3 +653,4 @@ ASTNode *parse_source(const char *src) {
     ASTNode *prog = parse_program();
     return prog;
 }
+

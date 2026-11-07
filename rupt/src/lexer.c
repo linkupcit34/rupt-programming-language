@@ -12,7 +12,7 @@ static void addtok(Lexer *L, TType type, const char *text, double num, int line,
 }
 
 static int iskw(const char *s) {
-    const char *kws[] = {"fn","def","class","if","elif","else","for","while","return","import","from","as","try","except","finally","raise","async","await","match","case","true","false","none","and","or","not","in","is","with","yield","lambda","test","assert","break","continue","pass","del","global","nonlocal",NULL};
+    const char *kws[] = {"fn","def","class","if","elif","else","for","while","return","import","from","as","try","except","finally","raise","async","await","match","case","true","false","none","and","or","not","in","is","with","yield","lambda","test","assert","break","continue","pass","del","global","nonlocal","rupt",NULL};
     for (int i=0;kws[i];i++) if (strcmp(kws[i],s)==0) return 1;
     return 0;
 }

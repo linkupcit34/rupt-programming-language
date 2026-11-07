@@ -13,6 +13,28 @@ Rupt — современный язык программирования с с�
 - Модульная архитектура: compiler / runtime / std / bricks.
 - Расширяемость: Bricks, native-модули, JIT-ready дизайн.
 
+### Установка (Windows)
+
+#### Вариант 1: установщик
+
+1. Скачайте `installer/installer.exe`.
+2. Запустите установщик.
+3. Перезапустите терминал.
+
+Установщик копирует файлы в `%LOCALAPPDATA%\Rupt` и добавляет `bin` в PATH.
+
+#### Вариант 2: вручную
+
+1. Скопируйте `rupt.exe` и `brick.exe` в папку, например `C:\Rupt\bin`.
+2. Скопируйте папки `std`, `registry`, `bricks` рядом.
+3. Добавьте `C:\Rupt\bin` в PATH.
+
+Проверка:
+
+```text
+rupt program.rupt
+```
+
 ### Запуск
 
 ```text
@@ -99,6 +121,10 @@ brick info <name>
 
 Профессиональный вывод: тип ошибки, файл, строка, колонка, stack trace, подсказки.
 
+### Развитие языка
+
+Rupt развивается благодаря контрибьюторам. Любой вклад (код, документация, тесты, идеи) помогает языку расти.
+
 ### Сборка
 
 ```text
@@ -118,27 +144,27 @@ Philosophy: simple for beginners, powerful for real applications.
 - Modular architecture: compiler / runtime / std / bricks.
 - Extensible: Bricks, native modules, JIT-ready design.
 
-## Installation (Windows)
+### Installation (Windows)
 
-### Option 1: installer
+#### Option 1: installer
 
-1. Download installer/installer.exe.
+1. Download `installer/installer.exe`.
 2. Run the installer.
 3. Restart the terminal.
 
-The installer copies files to %LOCALAPPDATA%\Rupt and adds in to PATH.
+The installer copies files to `%LOCALAPPDATA%\Rupt` and adds `bin` to PATH.
 
-### Option 2: manual
+#### Option 2: manual
 
-1. Copy upt.exe and rick.exe to a folder, e.g. C:\Rupt\bin.
-2. Copy std, egistry, ricks folders next to it.
-3. Add C:\Rupt\bin to PATH.
+1. Copy `rupt.exe` and `brick.exe` to a folder, e.g. `C:\Rupt\bin`.
+2. Copy `std`, `registry`, `bricks` folders next to it.
+3. Add `C:\Rupt\bin` to PATH.
 
 Check:
 
-`	ext
+```text
 rupt program.rupt
-`
+```
 
 ### Run
 
@@ -225,6 +251,10 @@ Example brick: `rupt_timer`.
 ### Errors
 
 Professional output: error type, file, line, column, stack trace, suggestions.
+
+### Language Development
+
+Rupt grows thanks to contributors. Any contribution (code, docs, tests, ideas) helps the language evolve.
 
 ### Build
 

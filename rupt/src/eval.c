@@ -631,7 +631,7 @@ static Value *eval_expr(ASTNode *node, Env *env) {
             if (iterv && iterv->type==VAL_LIST) {
                 for (int i=0;i<iterv->as.list.count;i++) {
                     Env *le = env_new(env);
-                    env_set(le, node->target->sval, iterv->as.list.items[i]);
+                    env_set(env, node->target->sval, iterv->as.list.items[i]);
                     if (node->test) {
                         Value *c = eval_expr(node->test, le);
                         if (!val_truthy(c)) { if(c)val_release(c); continue; }
@@ -668,7 +668,7 @@ static Value *eval_expr(ASTNode *node, Env *env) {
                 int cond = (step>0) ? (cur < end) : (cur > end);
                 while (cond) {
                     Env *le = env_new(env);
-                    env_set(le, node->target->sval, val_int(cur));
+                    env_set(env, node->target->sval, val_int(cur));
                     if (node->test) {
                         Value *c = eval_expr(node->test, le);
                         if (!val_truthy(c)) { if(c)val_release(c); cur+=step; cond = (step>0)?(cur<end):(cur>end); continue; }
@@ -702,7 +702,7 @@ static Value *eval_expr(ASTNode *node, Env *env) {
                 if (iterv2 && iterv2->type==VAL_LIST) {
                     for (int i=0;i<iterv2->as.list.count;i++) {
                         Env *le = env_new(env);
-                        env_set(le, node->target->sval, iterv2->as.list.items[i]);
+                        env_set(env, node->target->sval, iterv2->as.list.items[i]);
                         if (node->test) {
                             Value *c = eval_expr(node->test, le);
                             if (!val_truthy(c)) { if(c)val_release(c); continue; }
@@ -889,9 +889,10 @@ static int exec_stmt(ASTNode *node, Env *env, Frame *fr) {
             if (iter && iter->type==VAL_LIST) {
                 for (int i=0;i<iter->as.list.count;i++) {
                     Env *le = env_new(env);
-                    env_set(le, node->target->sval, iter->as.list.items[i]);
+                    env_set(env, node->target->sval, iter->as.list.items[i]);
                     if (node->block) {
-                        int s = exec_block(node->block, le, fr);
+                        int s = exec_block(node->block, env, fr);
+                        fprintf(stderr, "FOR BODY x before=%d\n", env_get(env,"x")? (int)((env_get(env,"x")->type==VAL_INT)?env_get(env,"x")->as.integer:0) : -999); fflush(stderr);
                         if (s == SIG_BREAK) { fr->signal=SIG_NONE; break; }
                         if (s == SIG_CONTINUE) { fr->signal=SIG_NONE; continue; }
                         if (s == SIG_RETURN || s == SIG_EXCEPTION) { val_release(iter); return s; }
@@ -904,9 +905,9 @@ static int exec_stmt(ASTNode *node, Env *env, Frame *fr) {
                 int cond = (step>0)?(cur<end):(cur>end);
                 while (cond) {
                     Env *le = env_new(env);
-                    env_set(le, node->target->sval, val_int(cur));
+                    env_set(env, node->target->sval, val_int(cur));
                     if (node->block) {
-                        int s = exec_block(node->block, le, fr);
+                        int s = exec_block(node->block, env, fr);
                         if (s == SIG_BREAK) { fr->signal=SIG_NONE; break; }
                         if (s == SIG_CONTINUE) { fr->signal=SIG_NONE; cur+=step; cond=(step>0)?(cur<end):(cur>end); continue; }
                         if (s == SIG_RETURN || s == SIG_EXCEPTION) { val_release(iter); return s; }
@@ -919,9 +920,9 @@ static int exec_stmt(ASTNode *node, Env *env, Frame *fr) {
                 for (int i=0;i<len;i++) {
                     char buf[2]={iter->as.string[i],0};
                     Env *le = env_new(env);
-                    env_set(le, node->target->sval, val_str(buf));
+                    env_set(env, node->target->sval, val_str(buf));
                     if (node->block) {
-                        int s = exec_block(node->block, le, fr);
+                        int s = exec_block(node->block, env, fr);
                         if (s == SIG_BREAK) { fr->signal=SIG_NONE; break; }
                         if (s == SIG_CONTINUE) { fr->signal=SIG_NONE; continue; }
                         if (s == SIG_RETURN || s == SIG_EXCEPTION) { val_release(iter); return s; }
@@ -1134,6 +1135,8 @@ int exec_block(ASTNode *block, Env *env, Frame *fr) {
     }
     return exec_stmt(block, env, fr);
 }
+
+
 
 
 

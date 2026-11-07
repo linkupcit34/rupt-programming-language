@@ -1,5 +1,0 @@
-[project]
-name = "rupt_game"
-version = "1.0.0"
-description = "Game library for Rupt (pygame-like)"
-

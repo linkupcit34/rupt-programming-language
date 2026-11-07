@@ -5,7 +5,6 @@ dares = ["Спой одну строчку любой песни.", "Сдела�
 visible("Игра: Правда или Действие")
 while true:
     choice = input("правда/действие (или выход): ")
-    visible("[" + choice + "] len=" + str(len(choice)))
     if choice == "выход" or choice == "":
         break
     if choice == "правда":

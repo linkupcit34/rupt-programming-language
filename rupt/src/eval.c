@@ -88,7 +88,7 @@ static Value *eval_expr(ASTNode *node, Env *env) {
         case N_IDENT: {
             Value *v = env_get(env, node->sval);
             if (!v) {
-                if (strcmp(node->sval,"print")==0 || strcmp(node->sval,"range")==0 || strcmp(node->sval,"len")==0 || strcmp(node->sval,"int")==0 || strcmp(node->sval,"float")==0 || strcmp(node->sval,"str")==0 || strcmp(node->sval,"bool")==0 || strcmp(node->sval,"list")==0 || strcmp(node->sval,"input")==0 || strcmp(node->sval,"time_now")==0 || strcmp(node->sval,"sleep_ms")==0) {
+                if (strcmp(node->sval,"print")==0 || strcmp(node->sval,"range")==0 || strcmp(node->sval,"len")==0 || strcmp(node->sval,"int")==0 || strcmp(node->sval,"float")==0 || strcmp(node->sval,"str")==0 || strcmp(node->sval,"bool")==0 || strcmp(node->sval,"list")==0 || strcmp(node->sval,"input")==0 || strcmp(node->sval,"time_now")==0 || strcmp(node->sval,"sleep_ms")==0 || strcmp(node->sval,"visible")==0) {
                     return val_null();
                 }
                 fprintf(stderr,"Ошибка имени: %s не определено / NameError: %s is not defined\n", node->sval);
@@ -327,7 +327,7 @@ static Value *eval_expr(ASTNode *node, Env *env) {
             if (node->target && node->target->type == N_IDENT) fname = node->target->sval;
             if (!result && fname) {
                 // builtins
-                if (strcmp(fname,"print")==0) {
+                if (strcmp(fname,"print")==0 || strcmp(fname,"visible")==0) {
                     for (int i=0;i<argc;i++) {
                         if (i) printf(" ");
                         printf("%s", val_to_str(args[i]));
@@ -1133,5 +1133,6 @@ int exec_block(ASTNode *block, Env *env, Frame *fr) {
     }
     return exec_stmt(block, env, fr);
 }
+
 
 

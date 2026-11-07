@@ -1,8 +1,0 @@
-rupt
-cit citName = "Alina"
-cit citAge = 21
-cit citSum = 10 + 5 * 2
-print citName
-print citAge
-print citSum
-print "Hello, " + citName

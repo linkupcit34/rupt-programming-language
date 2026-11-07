@@ -1,43 +1,61 @@
-# Rupt (ASM) — NASM x64 / Windows
+# Rupt
 
-Минимальный интерпретатор языка **Rupt**, написанный на ассемблере (NASM, x64, Windows API).
+## Русский
 
-## Язык
-- Файлы `.rpt` (и `.rtp`) **должны начинаться** со слова `rupt`.
-- Переменные объявляются через `cit`; **имя переменной должно начинаться с `cit`**.
-  - `cit citName = "Алина"`
-- Инструкции: `cit <имя> = <выражение>` и `print <выражение>`.
-- Выражения: целые числа, строки в `"..."`, ссылки на переменные, `+ - * /`, скобки `()`.
-- `+` выполняет сложение чисел или конкатенацию, если есть строка.
+Rupt — современный язык программирования с собственным интерпретатором на C.
 
-## Сборка (NASM + GoLink)
-Требуются `nasm` и `GoLink` в `PATH` (пути заданы в `build.bat`).
+### Запуск
 
-```bat
+```text
+rupt program.rupt
+rupt run program.rupt
+rupt
+```
+
+### Пример
+
+```rupt
+fn fibonacci(n):
+    if n <= 1:
+        return n
+    return fibonacci(n - 1) + fibonacci(n - 2)
+
+for i in range(10):
+    print(fibonacci(i))
+```
+
+### Сборка
+
+```text
 build.bat
 ```
-или вручную:
-```bat
-nasm -f win64 rupt.asm -o rupt.obj
-GoLink /console /entry main rupt.obj kernel32.dll
-```
 
-## Запуск
-```bat
-rupt.exe examples\hello.rpt
-```
-После установки (см. `rupt-dist/` / установщик): `rupt название.rpt`
+## English
 
-## Пример (`examples/hello.rpt`)
-```rpt
+Rupt is a modern programming language with a C-based interpreter.
+
+### Run
+
+```text
+rupt program.rupt
+rupt run program.rupt
 rupt
-cit citName = "Alina"
-cit citAge = 21
-cit citSum = 10 + 5 * 2
-print citName
-print citAge
-print citSum
-print "Hello, " + citName
 ```
 
-> Примечание: это минимальная реализация подмножества языка (целые числа, базовые выражения/строки, вывод). Для UTF-8/кириллицы в консоли Windows может потребоваться `chcp 65001`.
+### Example
+
+```rupt
+fn fibonacci(n):
+    if n <= 1:
+        return n
+    return fibonacci(n - 1) + fibonacci(n - 2)
+
+for i in range(10):
+    print(fibonacci(i))
+```
+
+### Build
+
+```text
+build.bat
+```

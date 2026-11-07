@@ -27,8 +27,9 @@ static void run_source(const char *src, Env *env) {
     Frame fr; fr.signal = 0; fr.retval = NULL; fr.exc = NULL;
     exec_block(prog, env, &fr);
     if (fr.signal == 4) {
-        fprintf(stderr, "Exception: %s\n", fr.exc ? val_to_str(fr.exc) : "Error");
+        fprintf(stderr, "??????: ... / Error: ...\n");
     }
+    printf("by cit\n");
 }
 
 static void repl(Env *env) {

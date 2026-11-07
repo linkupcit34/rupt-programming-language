@@ -1,0 +1,11 @@
+[project]
+name = "rupt_timer"
+version = "1.0.0"
+description = "Time utilities for Rupt"
+
+fn now():
+    return time_now()
+
+fn sleep(ms):
+    sleep_ms(ms)
+    return true

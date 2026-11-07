@@ -1,0 +1,8 @@
+rupt
+fn join(a, b):
+    return a + "/" + b
+
+fn basename(p):
+    parts = p.split("/")
+    return parts[len(parts) - 1]
+

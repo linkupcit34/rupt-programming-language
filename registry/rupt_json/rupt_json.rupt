@@ -1,0 +1,4 @@
+rupt
+fn pretty(obj):
+    return json.stringify(obj, true)
+

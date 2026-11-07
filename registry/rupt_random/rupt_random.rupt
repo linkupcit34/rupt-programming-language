@@ -1,0 +1,4 @@
+rupt
+fn choice(lst):
+    return lst[randint(0, len(lst) - 1)]
+

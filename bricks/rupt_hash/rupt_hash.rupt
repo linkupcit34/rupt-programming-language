@@ -1,0 +1,7 @@
+rupt
+fn djb2(s):
+    h = 5381
+    for ch in s:
+        h = h * 33 + ord(ch)
+    return h
+

@@ -1,0 +1,5 @@
+[project]
+name = "rupt_os"
+version = "1.0.0"
+description = "OS utilities"
+

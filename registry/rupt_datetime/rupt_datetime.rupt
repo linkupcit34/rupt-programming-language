@@ -1,0 +1,4 @@
+rupt
+fn now_iso():
+    return datetime.now()
+

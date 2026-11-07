@@ -1,0 +1,8 @@
+rupt
+fn take(n, lst):
+    res = []
+    for i in range(n):
+        if i < len(lst):
+            res.append(lst[i])
+    return res
+

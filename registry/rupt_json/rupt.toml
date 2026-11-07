@@ -1,0 +1,5 @@
+[project]
+name = "rupt_json"
+version = "1.0.0"
+description = "JSON utilities"
+

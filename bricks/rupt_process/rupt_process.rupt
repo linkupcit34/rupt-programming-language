@@ -1,0 +1,4 @@
+rupt
+fn args():
+    return sys.argv
+

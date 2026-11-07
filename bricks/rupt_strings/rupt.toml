@@ -1,0 +1,5 @@
+[project]
+name = "rupt_strings"
+version = "1.0.0"
+description = "String utilities"
+

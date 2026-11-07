@@ -1,0 +1,5 @@
+[project]
+name = "rupt_http"
+version = "1.0.0"
+description = "HTTP stubs"
+

@@ -1,0 +1,13 @@
+rupt
+fn keys(m):
+    res = []
+    for k in m:
+        res.append(k)
+    return res
+
+fn values(m):
+    res = []
+    for k in m:
+        res.append(m[k])
+    return res
+

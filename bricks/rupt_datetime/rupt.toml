@@ -1,0 +1,5 @@
+[project]
+name = "rupt_datetime"
+version = "1.0.0"
+description = "Datetime utilities"
+

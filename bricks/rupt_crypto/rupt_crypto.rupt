@@ -1,0 +1,4 @@
+rupt
+fn sha256(text):
+    return hash.sha256()
+

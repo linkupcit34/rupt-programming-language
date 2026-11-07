@@ -1,0 +1,7 @@
+rupt
+fn info(msg):
+    print("[INFO]", msg)
+
+fn error(msg):
+    print("[ERROR]", msg)
+

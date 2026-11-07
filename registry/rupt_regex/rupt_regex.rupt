@@ -1,0 +1,4 @@
+rupt
+fn is_match(pat, text):
+    return regex.match(pat, text)
+

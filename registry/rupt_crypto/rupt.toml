@@ -1,0 +1,5 @@
+[project]
+name = "rupt_crypto"
+version = "1.0.0"
+description = "Crypto stubs"
+

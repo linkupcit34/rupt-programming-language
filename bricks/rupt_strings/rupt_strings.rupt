@@ -1,0 +1,13 @@
+rupt
+fn repeat(s, n):
+    res = ""
+    for i in range(n):
+        res = res + s
+    return res
+
+fn reverse(s):
+    res = ""
+    for ch in s:
+        res = ch + res
+    return res
+

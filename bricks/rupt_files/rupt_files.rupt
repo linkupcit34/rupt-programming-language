@@ -1,0 +1,13 @@
+rupt
+fn read_text(path):
+    f = open(path, "r")
+    t = f.read()
+    f.close()
+    return t
+
+fn write_text(path, text):
+    f = open(path, "w")
+    f.write(text)
+    f.close()
+    return true
+

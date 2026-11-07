@@ -1,0 +1,5 @@
+[project]
+name = "rupt_files"
+version = "1.0.0"
+description = "File utilities"
+

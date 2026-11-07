@@ -1,0 +1,5 @@
+[project]
+name = "rupt_regex"
+version = "1.0.0"
+description = "Regex utilities"
+

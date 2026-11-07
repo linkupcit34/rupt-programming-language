@@ -1,0 +1,5 @@
+[project]
+name = "rupt_path"
+version = "1.0.0"
+description = "Path utilities"
+

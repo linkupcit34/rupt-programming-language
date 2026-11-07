@@ -1,0 +1,9 @@
+rupt
+fn identity(x):
+    return x
+
+fn compose(f, g):
+    fn h(x):
+        return f(g(x))
+    return h
+

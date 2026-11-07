@@ -1,0 +1,10 @@
+rupt
+fn counter(lst):
+    m = {}
+    for x in lst:
+        if m.has(x):
+            m[x] = m[x] + 1
+        else:
+            m[x] = 1
+    return m
+

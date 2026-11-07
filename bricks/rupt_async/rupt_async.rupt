@@ -1,0 +1,4 @@
+rupt
+async fn run(coro):
+    return await coro
+

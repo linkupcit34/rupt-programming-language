@@ -1,0 +1,5 @@
+[project]
+name = "rupt_collections"
+version = "1.0.0"
+description = "Collections utilities"
+

@@ -1,0 +1,4 @@
+rupt
+fn cwd():
+    return os.getcwd()
+

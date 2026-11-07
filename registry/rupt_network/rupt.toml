@@ -1,0 +1,5 @@
+[project]
+name = "rupt_network"
+version = "1.0.0"
+description = "Network stubs"
+

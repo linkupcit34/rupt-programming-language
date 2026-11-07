@@ -1,0 +1,6 @@
+rupt
+fn assert_equal(a, b):
+    if a != b:
+        raise Exception("not equal")
+    return true
+

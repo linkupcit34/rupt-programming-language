@@ -210,6 +210,9 @@ class User:
 
 ### Functions
 
+- isible(...) — output (like print).
+- 	oilet() — full program stop.
+
 - positional, keyword, default arguments
 - variadic (*args, **kwargs)
 - closures, recursion, lambda
@@ -264,4 +267,5 @@ Rupt grows thanks to contributors. Any contribution (code, docs, tests, ideas) h
 ```text
 build.bat
 ```
+
 

@@ -78,11 +78,12 @@ class User:
 
 ### Функции
 
-- позиционные, именованные, значения по умолчанию
-- variadic (*args, **kwargs)
-- замыкания, рекурсия, lambda
-- visible(...) — вывод (как print).
-- toilet() — полная остановка программы.
+  - позиционные, именованные, значения по умолчанию
+  - variadic (*args, **kwargs)
+  - замыкания, рекурсия, lambda
+  - visible(...) — вывод (как print).
+  - toilet() — полная остановка программы.
+  - встроенные: print, visible, toilet, len, range, int, float, str, bool, list, input, sum, min, max, sorted, reversed, enumerate, zip, all, any, abs, time_now, sleep_ms
 
 ### Коллекции
 
@@ -214,11 +215,12 @@ class User:
 
 ### Functions
 
-- positional, keyword, default arguments
-- variadic (*args, **kwargs)
-- closures, recursion, lambda
-- visible(...) — output (like print).
-- toilet() — full program stop.
+  - positional, keyword, default arguments
+  - variadic (*args, **kwargs)
+  - closures, recursion, lambda
+  - visible(...) — output (like print).
+  - toilet() — full program stop.
+  - builtins: print, visible, toilet, len, range, int, float, str, bool, list, input, sum, min, max, sorted, reversed, enumerate, zip, all, any, abs, time_now, sleep_ms
 
 ### Collections
 

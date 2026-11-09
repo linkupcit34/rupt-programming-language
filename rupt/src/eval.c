@@ -87,7 +87,7 @@ static Value *eval_expr(ASTNode *node, Env *env) {
         case N_IDENT: {
             Value *v = env_get(env, node->sval);
             if (!v) {
-                if (strcmp(node->sval,"print")==0 || strcmp(node->sval,"range")==0 || strcmp(node->sval,"len")==0 || strcmp(node->sval,"int")==0 || strcmp(node->sval,"float")==0 || strcmp(node->sval,"str")==0 || strcmp(node->sval,"bool")==0 || strcmp(node->sval,"list")==0 || strcmp(node->sval,"input")==0 || strcmp(node->sval,"time_now")==0 || strcmp(node->sval,"sleep_ms")==0 || strcmp(node->sval,"visible")==0 || strcmp(node->sval,"toilet")==0) {
+                if (strcmp(node->sval,"print")==0 || strcmp(node->sval,"range")==0 || strcmp(node->sval,"len")==0 || strcmp(node->sval,"int")==0 || strcmp(node->sval,"float")==0 || strcmp(node->sval,"str")==0 || strcmp(node->sval,"bool")==0 || strcmp(node->sval,"list")==0 || strcmp(node->sval,"input")==0 || strcmp(node->sval,"time_now")==0 || strcmp(node->sval,"sleep_ms")==0 || strcmp(node->sval,"visible")==0 || strcmp(node->sval,"toilet")==0 || strcmp(node->sval,"sum")==0 || strcmp(node->sval,"min")==0 || strcmp(node->sval,"max")==0 || strcmp(node->sval,"sorted")==0 || strcmp(node->sval,"reversed")==0 || strcmp(node->sval,"enumerate")==0 || strcmp(node->sval,"zip")==0 || strcmp(node->sval,"all")==0 || strcmp(node->sval,"any")==0 || strcmp(node->sval,"abs")==0) {
                     return val_null();
                 }
                 fprintf(stderr, "NameError: %s is not defined\n", node->sval);
@@ -342,8 +342,129 @@ static Value *eval_expr(ASTNode *node, Env *env) {
                         else if (args[0]->type==VAL_STR) l=strlen(args[0]->as.string);
                         else if (args[0]->type==VAL_MAP) l=args[0]->as.map.count;
                     }
-                    result = val_int(l);
-                } else if (strcmp(fname,"range")==0) {
+    result = val_int(l);
+} else if (strcmp(fname,"sum")==0) {
+    if (argc == 1 && args[0]->type == VAL_LIST) {
+        long long total = 0;
+        double ftotal = 0.0;
+        int has_float = 0;
+        for (int i = 0; i < args[0]->as.list.count; i++) {
+            Value *v = args[0]->as.list.items[i];
+            if (v->type == VAL_INT) total += v->as.integer;
+            else if (v->type == VAL_FLOAT) { ftotal += v->as.floating; has_float = 1; }
+        }
+        if (has_float) result = val_float(ftotal + (double)total);
+        else result = val_int(total);
+    } else {
+        result = val_int(0);
+    }
+} else if (strcmp(fname,"min")==0) {
+    if (argc == 1 && args[0]->type == VAL_LIST && args[0]->as.list.count > 0) {
+        Value *best = args[0]->as.list.items[0];
+        for (int i = 1; i < args[0]->as.list.count; i++) {
+            Value *c = args[0]->as.list.items[i];
+            double cv = c->type==VAL_INT ? (double)c->as.integer : c->as.floating;
+            double bv = best->type==VAL_INT ? (double)best->as.integer : best->as.floating;
+            if (cv < bv) best = c;
+        }
+        result = best->type == VAL_INT ? val_int(best->as.integer) : val_float(best->as.floating);
+    } else {
+        result = val_int(0);
+    }
+} else if (strcmp(fname,"max")==0) {
+    if (argc == 1 && args[0]->type == VAL_LIST && args[0]->as.list.count > 0) {
+        Value *best = args[0]->as.list.items[0];
+        for (int i = 1; i < args[0]->as.list.count; i++) {
+            Value *c = args[0]->as.list.items[i];
+            double cv = c->type==VAL_INT ? (double)c->as.integer : c->as.floating;
+            double bv = best->type==VAL_INT ? (double)best->as.integer : best->as.floating;
+            if (cv > bv) best = c;
+        }
+        result = best->type == VAL_INT ? val_int(best->as.integer) : val_float(best->as.floating);
+    } else {
+        result = val_int(0);
+    }
+} else if (strcmp(fname,"sorted")==0) {
+    if (argc == 1 && args[0]->type == VAL_LIST) {
+        Value *copy = val_list();
+        for (int i = 0; i < args[0]->as.list.count; i++) list_append(copy, args[0]->as.list.items[i]);
+        for (int i = 0; i < copy->as.list.count; i++) {
+            for (int j = i + 1; j < copy->as.list.count; j++) {
+                Value *a = copy->as.list.items[i];
+                Value *b = copy->as.list.items[j];
+                double av = a->type==VAL_INT ? (double)a->as.integer : a->as.floating;
+                double bv = b->type==VAL_INT ? (double)b->as.integer : b->as.floating;
+                if (av > bv) {
+                    Value *tmp = copy->as.list.items[i];
+                    copy->as.list.items[i] = copy->as.list.items[j];
+                    copy->as.list.items[j] = tmp;
+                }
+            }
+        }
+        result = copy;
+    } else {
+        result = val_list();
+    }
+} else if (strcmp(fname,"reversed")==0) {
+    if (argc == 1 && args[0]->type == VAL_LIST) {
+        Value *copy = val_list();
+        for (int i = args[0]->as.list.count - 1; i >= 0; i--) list_append(copy, args[0]->as.list.items[i]);
+        result = copy;
+    } else {
+        result = val_list();
+    }
+} else if (strcmp(fname,"enumerate")==0) {
+    if (argc == 1 && args[0]->type == VAL_LIST) {
+        Value *out = val_list();
+        for (int i = 0; i < args[0]->as.list.count; i++) {
+            Value *pair = val_list();
+            list_append(pair, val_int(i));
+            list_append(pair, args[0]->as.list.items[i]);
+            list_append(out, pair);
+        }
+        result = out;
+    } else {
+        result = val_list();
+    }
+} else if (strcmp(fname,"zip")==0) {
+    if (argc == 2 && args[0]->type == VAL_LIST && args[1]->type == VAL_LIST) {
+        int n = args[0]->as.list.count < args[1]->as.list.count ? args[0]->as.list.count : args[1]->as.list.count;
+        Value *out = val_list();
+        for (int i = 0; i < n; i++) {
+            Value *pair = val_list();
+            list_append(pair, args[0]->as.list.items[i]);
+            list_append(pair, args[1]->as.list.items[i]);
+            list_append(out, pair);
+        }
+        result = out;
+    } else {
+        result = val_list();
+    }
+} else if (strcmp(fname,"all")==0) {
+    if (argc == 1 && args[0]->type == VAL_LIST) {
+        int all_t = 1;
+        for (int i = 0; i < args[0]->as.list.count; i++) if (!val_truthy(args[0]->as.list.items[i])) { all_t = 0; break; }
+        result = val_bool(all_t);
+    } else {
+        result = val_bool(1);
+    }
+} else if (strcmp(fname,"any")==0) {
+    if (argc == 1 && args[0]->type == VAL_LIST) {
+        int any_t = 0;
+        for (int i = 0; i < args[0]->as.list.count; i++) if (val_truthy(args[0]->as.list.items[i])) { any_t = 1; break; }
+        result = val_bool(any_t);
+    } else {
+        result = val_bool(0);
+    }
+} else if (strcmp(fname,"abs")==0) {
+    if (argc == 1) {
+        if (args[0]->type == VAL_INT) result = val_int(args[0]->as.integer < 0 ? -args[0]->as.integer : args[0]->as.integer);
+        else if (args[0]->type == VAL_FLOAT) result = val_float(args[0]->as.floating < 0 ? -args[0]->as.floating : args[0]->as.floating);
+        else result = val_int(0);
+    } else {
+        result = val_int(0);
+    }
+} else if (strcmp(fname,"range")==0) {
                     long long start=0,end=0,step=1;
                     if (argc==1) { end = (args[0]->type==VAL_INT)?args[0]->as.integer:(long long)args[0]->as.floating; }
                     else if (argc>=2) {
@@ -389,7 +510,7 @@ static Value *eval_expr(ASTNode *node, Env *env) {
                     char buf[1024]; 
                     if (argc>0) printf("%s", val_to_str(args[0]));
                     if (fgets(buf,1024,stdin)) {
-                        size_t l=strlen(buf); if (l>0 && buf[l-1]=='\n') buf[l-1]=0;
+                        size_t l=strlen(buf); if (l>0 && buf[l-1]=='\n') buf[l-1]=0; if (l>1 && buf[l-1]=='\r') buf[l-1]=0;
                         result = val_str(buf);
                     } else result = val_str("");
                 } else if (strcmp(fname,"time_now")==0) {

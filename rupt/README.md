@@ -83,7 +83,7 @@ class User:
   - замыкания, рекурсия, lambda
   - visible(...) — вывод (как print).
   - toilet() — полная остановка программы.
-  - встроенные: print, visible, toilet, len, range, int, float, str, bool, list, input, sum, min, max, sorted, reversed, enumerate, zip, all, any, abs, time_now, sleep_ms
+  - встроенные: print, visible, toilet, len, range, int, float, str, bool, list, input, sum, min, max, sorted, reversed, enumerate, zip, all, any, abs, time_now, sleep_ms, file_read, file_write, file_append, file_delete, file_exists, sound_beep, sound_play
 
 ### Коллекции
 
@@ -105,6 +105,29 @@ from math import sqrt
 ### Стандартная библиотека
 
 Модули: math, os, json, random, time, path, sys, string, collections, regex, datetime, terminal, environment, logging, files, network, http, crypto, hash, threading, process, subprocess, async, itertools, functools.
+
+### Графика и звук
+
+- `gfx_init(w, h)` — создать холст.
+- `gfx_clear()` — очистить холст.
+- `gfx_color("#RRGGBB")` — установить цвет в формате HEX.
+- `gfx_pixel(x, y)` — точка.
+- `gfx_line(x1, y1, x2, y2)` — отрезок.
+- `gfx_rect(x, y, w, h)` / `gfx_fill_rect(x, y, w, h)` — прямоугольник / залитый прямоугольник.
+- `gfx_circle(x, y, r)` / `gfx_fill_circle(x, y, r)` — окружность / залитый круг.
+- `gfx_show()` — отрисовать холст в терминале.
+- `gfx_save("file.ppm")` — сохранить холст в PPM.
+- `gfx_close()` — освободить холст.
+- `sound_beep(freq, ms)` — звуковой сигнал.
+- `sound_play("file")` — проигролвть звук (через Beep).
+
+### Файлы
+
+- `file_read(path)` — прочитать файл в строку.
+- `file_write(path, text)` — записать файл.
+- `file_append(path, text)` — дописать в файл.
+- `file_delete(path)` — удалить файл.
+- `file_exists(path)` — проверить существование файла.
 
 ### Bricks (пакеты)
 
@@ -220,7 +243,7 @@ class User:
   - closures, recursion, lambda
   - visible(...) — output (like print).
   - toilet() — full program stop.
-  - builtins: print, visible, toilet, len, range, int, float, str, bool, list, input, sum, min, max, sorted, reversed, enumerate, zip, all, any, abs, time_now, sleep_ms
+  - builtins: print, visible, toilet, len, range, int, float, str, bool, list, input, sum, min, max, sorted, reversed, enumerate, zip, all, any, abs, time_now, sleep_ms, file_read, file_write, file_append, file_delete, file_exists, sound_beep, sound_play
 
 ### Collections
 
@@ -242,6 +265,29 @@ Module search: current directory, std/, bricks/<name>/.
 ### Standard Library
 
 Modules: math, os, json, random, time, path, sys, string, collections, regex, datetime, terminal, environment, logging, files, network, http, crypto, hash, threading, process, subprocess, async, itertools, functools.
+
+### Graphics and Sound
+
+- `gfx_init(w, h)` — create canvas.
+- `gfx_clear()` — clear canvas.
+- `gfx_color("#RRGGBB")` — set color in HEX format.
+- `gfx_pixel(x, y)` — pixel.
+- `gfx_line(x1, y1, x2, y2)` — line segment.
+- `gfx_rect(x, y, w, h)` / `gfx_fill_rect(x, y, w, h)` — rectangle / filled rectangle.
+- `gfx_circle(x, y, r)` / `gfx_fill_circle(x, y, r)` — circle / filled circle.
+- `gfx_show()` — render canvas to terminal.
+- `gfx_save("file.ppm")` — save canvas to PPM.
+- `gfx_close()` — free canvas.
+- `sound_beep(freq, ms)` — beep sound.
+- `sound_play("file")` — play sound (via Beep).
+
+### Files
+
+- `file_read(path)` — read file into string.
+- `file_write(path, text)` — write file.
+- `file_append(path, text)` — append to file.
+- `file_delete(path)` — delete file.
+- `file_exists(path)` — check if file exists.
 
 ### Bricks (Packages)
 

@@ -116,7 +116,7 @@ static Value *eval_expr(ASTNode *node, Env *env) {
         case N_IDENT: {
             Value *v = env_get(env, node->sval);
             if (!v) {
-                if (strcmp(node->sval,"print")==0 || strcmp(node->sval,"range")==0 || strcmp(node->sval,"len")==0 || strcmp(node->sval,"int")==0 || strcmp(node->sval,"float")==0 || strcmp(node->sval,"str")==0 || strcmp(node->sval,"bool")==0 || strcmp(node->sval,"list")==0 || strcmp(node->sval,"input")==0 || strcmp(node->sval,"time_now")==0 || strcmp(node->sval,"sleep_ms")==0 || strcmp(node->sval,"visible")==0 || strcmp(node->sval,"toilet")==0 || strcmp(node->sval,"sum")==0 || strcmp(node->sval,"min")==0 || strcmp(node->sval,"max")==0 || strcmp(node->sval,"sorted")==0 || strcmp(node->sval,"reversed")==0 || strcmp(node->sval,"enumerate")==0 || strcmp(node->sval,"zip")==0 || strcmp(node->sval,"all")==0 || strcmp(node->sval,"any")==0 || strcmp(node->sval,"abs")==0 || strcmp(node->sval,"gfx_init")==0 || strcmp(node->sval,"gfx_clear")==0 || strcmp(node->sval,"gfx_color")==0 || strcmp(node->sval,"gfx_pixel")==0 || strcmp(node->sval,"gfx_line")==0 || strcmp(node->sval,"gfx_rect")==0 || strcmp(node->sval,"gfx_draw_rect")==0 || strcmp(node->sval,"gfx_circle")==0 || strcmp(node->sval,"gfx_draw_circle")==0 || strcmp(node->sval,"gfx_fill_rect")==0 || strcmp(node->sval,"gfx_fill_circle")==0 || strcmp(node->sval,"gfx_show")==0 || strcmp(node->sval,"gfx_save")==0 || strcmp(node->sval,"gfx_close")==0) {
+                if (strcmp(node->sval,"print")==0 || strcmp(node->sval,"range")==0 || strcmp(node->sval,"len")==0 || strcmp(node->sval,"int")==0 || strcmp(node->sval,"float")==0 || strcmp(node->sval,"str")==0 || strcmp(node->sval,"bool")==0 || strcmp(node->sval,"list")==0 || strcmp(node->sval,"input")==0 || strcmp(node->sval,"time_now")==0 || strcmp(node->sval,"sleep_ms")==0 || strcmp(node->sval,"visible")==0 || strcmp(node->sval,"toilet")==0 || strcmp(node->sval,"sum")==0 || strcmp(node->sval,"min")==0 || strcmp(node->sval,"max")==0 || strcmp(node->sval,"sorted")==0 || strcmp(node->sval,"reversed")==0 || strcmp(node->sval,"enumerate")==0 || strcmp(node->sval,"zip")==0 || strcmp(node->sval,"all")==0 || strcmp(node->sval,"any")==0 || strcmp(node->sval,"abs")==0 || strcmp(node->sval,"gfx_init")==0 || strcmp(node->sval,"gfx_clear")==0 || strcmp(node->sval,"gfx_color")==0 || strcmp(node->sval,"gfx_pixel")==0 || strcmp(node->sval,"gfx_line")==0 || strcmp(node->sval,"gfx_rect")==0 || strcmp(node->sval,"gfx_draw_rect")==0 || strcmp(node->sval,"gfx_circle")==0 || strcmp(node->sval,"gfx_draw_circle")==0 || strcmp(node->sval,"gfx_fill_rect")==0 || strcmp(node->sval,"gfx_fill_circle")==0 || strcmp(node->sval,"gfx_show")==0 || strcmp(node->sval,"gfx_save")==0 || strcmp(node->sval,"gfx_close")==0 || strcmp(node->sval,"file_read")==0 || strcmp(node->sval,"file_write")==0 || strcmp(node->sval,"file_append")==0 || strcmp(node->sval,"file_delete")==0 || strcmp(node->sval,"file_exists")==0 || strcmp(node->sval,"sound_beep")==0 || strcmp(node->sval,"sound_play")==0) {
                     return val_null();
                 }
                 fprintf(stderr, "NameError: %s is not defined\n", node->sval);
@@ -542,6 +542,72 @@ static Value *eval_expr(ASTNode *node, Env *env) {
 } else if (strcmp(fname,"gfx_close")==0) {
     if (gfx_buf) { free(gfx_buf); gfx_buf=NULL; gfx_w=gfx_h=0; }
     result = val_null();
+} else if (strcmp(fname,"file_exists")==0) {
+    if (argc == 1 && args[0]->type == VAL_STR) {
+        FILE *f = fopen(args[0]->as.string, "r");
+        if (f) { fclose(f); result = val_bool(1); }
+        else result = val_bool(0);
+    } else {
+        result = val_bool(0);
+    }
+} else if (strcmp(fname,"file_read")==0) {
+    if (argc == 1 && args[0]->type == VAL_STR) {
+        FILE *f = fopen(args[0]->as.string, "rb");
+        if (!f) { result = val_null(); }
+        else {
+            fseek(f, 0, SEEK_END);
+            long sz = ftell(f);
+            fseek(f, 0, SEEK_SET);
+            char *buf = (char *)calloc(sz + 1, 1);
+            if (buf) {
+                fread(buf, 1, sz, f);
+                buf[sz] = 0;
+                result = val_str(buf);
+                free(buf);
+            } else {
+                result = val_null();
+            }
+            fclose(f);
+        }
+    } else {
+        result = val_null();
+    }
+} else if (strcmp(fname,"file_write")==0 || strcmp(fname,"file_append")==0) {
+    if (argc >= 2 && args[0]->type == VAL_STR && args[1]->type == VAL_STR) {
+        FILE *f = fopen(args[0]->as.string, strcmp(fname,"file_append")==0 ? "a" : "w");
+        if (f) {
+            fwrite(args[1]->as.string, 1, strlen(args[1]->as.string), f);
+            fclose(f);
+            result = val_bool(1);
+        } else {
+            result = val_bool(0);
+        }
+    } else {
+        result = val_bool(0);
+    }
+} else if (strcmp(fname,"file_delete")==0) {
+    if (argc == 1 && args[0]->type == VAL_STR) {
+        if (remove(args[0]->as.string) == 0) result = val_bool(1);
+        else result = val_bool(0);
+    } else {
+        result = val_bool(0);
+    }
+} else if (strcmp(fname,"sound_beep")==0) {
+    if (argc >= 1 && args[0]->type == VAL_INT) {
+        int freq = (int)args[0]->as.integer;
+        int ms = argc >= 2 && args[1]->type == VAL_INT ? (int)args[1]->as.integer : 200;
+        Beep(freq, ms);
+        result = val_bool(1);
+    } else {
+        result = val_bool(0);
+    }
+} else if (strcmp(fname,"sound_play")==0) {
+    if (argc == 1 && args[0]->type == VAL_STR) {
+        Beep(440, 300);
+        result = val_bool(1);
+    } else {
+        result = val_bool(0);
+    }
 } else if (strcmp(fname,"range")==0) {
                     long long start=0,end=0,step=1;
                     if (argc==1) { end = (args[0]->type==VAL_INT)?args[0]->as.integer:(long long)args[0]->as.floating; }

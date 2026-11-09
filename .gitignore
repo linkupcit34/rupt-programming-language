@@ -1,0 +1,11 @@
+# Build artifacts
+rupt/rupt.exe
+rupt/brick.exe
+installer/installer.exe
+
+# Compiler toolchain (vendored, not part of Rupt source)
+tools/
+
+# Bytecode / caches
+*.rbc
+__pycache__/

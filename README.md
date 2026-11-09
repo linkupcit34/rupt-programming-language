@@ -22,6 +22,7 @@ Modern programming language with its own interpreter, bytecode, and **Bricks** p
 - Стандартная библиотека: math, os, json, random, time, path, sys, string и др.
 - Асинхронность `async fn` / `await`
 - Обработка ошибок с расшифровкой (type, message, location, suggestions)
+- **Графика:** `gfx_init`, `gfx_color("#RRGGBB")`, `gfx_pixel`, `gfx_line`, `gfx_rect`, `gfx_circle`, `gfx_fill_rect`, `gfx_fill_circle`, `gfx_show`, `gfx_save`, `gfx_close`
 - Формат скомпилированного байткода `.rbc`
 - Форматер, линтер, тесты, профилировщик, отладчик (раздел инструментов)
 
@@ -46,6 +47,21 @@ fn fibonacci(n):
 
 for i in range(10):
     print(fibonacci(i))
+```
+
+Пример графики:
+```rupt
+rupt
+gfx_init(30, 15)
+gfx_color("#FF0000")
+gfx_draw_rect(2, 2, 8, 4)
+gfx_color("#00FF00")
+gfx_fill_rect(12, 6, 8, 4)
+gfx_color("#0000FF")
+gfx_draw_circle(20, 8, 3)
+gfx_show()
+gfx_save("pic.ppm")
+gfx_close()
 ```
 
 ### Установка (Windows)
@@ -104,6 +120,7 @@ Rupt развивается благодаря контрибьюторам. Л�
 - Standard library: math, os, json, random, time, path, sys, string, and more
 - Async `async fn` / `await`
 - Professional error output (type, message, source location, suggestions)
+- **Graphics:** `gfx_init`, `gfx_color("#RRGGBB")`, `gfx_pixel`, `gfx_line`, `gfx_rect`, `gfx_circle`, `gfx_fill_rect`, `gfx_fill_circle`, `gfx_show`, `gfx_save`, `gfx_close`
 - Compiled bytecode format `.rbc`
 - Formatter, linter, tests, profiler, debugger
 
@@ -128,6 +145,21 @@ fn fibonacci(n):
 
 for i in range(10):
     print(fibonacci(i))
+```
+
+Graphics example:
+```rupt
+rupt
+gfx_init(30, 15)
+gfx_color("#FF0000")
+gfx_draw_rect(2, 2, 8, 4)
+gfx_color("#00FF00")
+gfx_fill_rect(12, 6, 8, 4)
+gfx_color("#0000FF")
+gfx_draw_circle(20, 8, 3)
+gfx_show()
+gfx_save("pic.ppm")
+gfx_close()
 ```
 
 ### Installation (Windows)

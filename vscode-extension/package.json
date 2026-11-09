@@ -1,0 +1,42 @@
+{
+  "name": "rupt",
+  "displayName": "Rupt",
+  "description": "Syntax highlighting and language support for the Rupt programming language.",
+  "version": "0.1.0",
+  "publisher": "rupt-lang",
+  "engines": {
+    "vscode": "^1.70.0"
+  },
+  "categories": [
+    "Programming Languages",
+    "Linters",
+    "Snippets"
+  ],
+  "contributes": {
+    "languages": [
+      {
+        "id": "rupt",
+        "aliases": ["Rupt", "rupt"],
+        "extensions": [".rupt"],
+        "configuration": "./language-configuration.json",
+        "icon": "file"
+      }
+    ],
+    "grammars": [
+      {
+        "language": "rupt",
+        "scopeName": "source.rupt",
+        "path": "./syntaxes/rupt.tmLanguage.json"
+      }
+    ],
+    "snippets": [
+      {
+        "language": "rupt",
+        "path": "./snippets/rupt.code-snippets"
+      }
+    ]
+  },
+  "scripts": {
+    "vscode:prepublish": "echo done"
+  }
+}

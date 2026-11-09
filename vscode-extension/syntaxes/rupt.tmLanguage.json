@@ -1,0 +1,105 @@
+{
+  "$schema": "https://raw.githubusercontent.com/microsoft/tmlanguage/master/schema/tmLanguage.json",
+  "name": "Rupt",
+  "scopeName": "source.rupt",
+  "fileTypes": ["rupt"],
+  "patterns": [
+    { "include": "#comment" },
+    { "include": "#string" },
+    { "include": "#interpolated_string" },
+    { "include": "#number" },
+    { "include": "#keyword" },
+    { "include": "#builtin" },
+    { "include": "#type" },
+    { "include": "#decorator" },
+    { "include": "#operator" },
+    { "include": "#punctuation" },
+    { "include": "#identifier" }
+  ],
+  "repository": {
+    "comment": {
+      "name": "comment.line.number-sign.rupt",
+      "begin": "#",
+      "end": "\\n"
+    },
+    "string": {
+      "name": "string.quoted.double.rupt",
+      "begin": "\"",
+      "end": "\"",
+      "patterns": [
+        { "include": "#escape" }
+      ]
+    },
+    "single_quote_string": {
+      "name": "string.quoted.single.rupt",
+      "begin": "'",
+      "end": "'",
+      "patterns": [
+        { "include": "#escape" }
+      ]
+    },
+    "interpolated_string": {
+      "name": "string.quoted.double.rupt",
+      "begin": "\"",
+      "end": "\"",
+      "patterns": [
+        { "include": "#interpolation" },
+        { "include": "#escape" }
+      ]
+    },
+    "interpolation": {
+      "name": "string.interpolated.rupt",
+      "begin": "\\{",
+      "end": "\\}",
+      "patterns": [
+        { "include": "#expression" }
+      ]
+    },
+    "escape": {
+      "name": "string.escape.rupt",
+      "match": "\\\\[ntr\"'\\\\]"
+    },
+    "number": {
+      "name": "constant.numeric.rupt",
+      "match": "\\b(?:0x[0-9a-fA-F]+|\\d+(?:\\.\\d+)?(?:e[+-]?\\d+)?|\\d+)\\b"
+    },
+    "keyword": {
+      "name": "keyword.control.rupt",
+      "match": "\\b(?:fn|def|class|if|elif|else|for|while|return|import|from|as|try|except|finally|raise|async|await|match|case|true|false|none|and|or|not|in|is|with|yield|lambda|test|assert|break|continue|pass|del|global|nonlocal|interface|protocol|enum|struct|type)\\b"
+    },
+    "builtin": {
+      "name": "keyword.other.rupt",
+      "match": "\\b(?:print|visible|toilet|len|range|int|float|str|bool|list|input|sum|min|max|sorted|reversed|enumerate|zip|all|any|abs|time_now|sleep_ms|file_read|file_write|file_append|file_delete|file_exists|sound_beep|sound_play|gfx_init|gfx_clear|gfx_color|gfx_pixel|gfx_line|gfx_rect|gfx_circle|gfx_fill_rect|gfx_fill_circle|gfx_show|gfx_save|gfx_close)\\b"
+    },
+    "type": {
+      "name": "entity.name.type.rupt",
+      "match": "\\b(?:Int|Float|Bool|String|None|List|Tuple|Set|Map|Function|Class|Instance|Module|Range)\\b"
+    },
+    "decorator": {
+      "name": "keyword.other.decorator.rupt",
+      "match": "@[A-Za-z_][A-Za-z0-9_]*"
+    },
+    "operator": {
+      "name": "keyword.operator.rupt",
+      "match": "==|!=|<=|>=|\\*\\*|//|\\+=|\\-=|\\*=|/=|%=|\\*=|->|=>|\\+|\\-|\\*|/|%|<|>|=|!|&|\\|"
+    },
+    "punctuation": {
+      "name": "punctuation.rupt",
+      "match": "\\(|\\)|\\[|\\]|\\{|\\}|:|,|\\.|;|@|->|=>"
+    },
+    "identifier": {
+      "name": "variable.other.rupt",
+      "match": "[A-Za-z_][A-Za-z0-9_]*"
+    },
+    "expression": {
+      "patterns": [
+        { "include": "#number" },
+        { "include": "#string" },
+        { "include": "#keyword" },
+        { "include": "#identifier" },
+        { "include": "#operator" },
+        { "include": "#punctuation" }
+      ]
+    }
+  }
+}

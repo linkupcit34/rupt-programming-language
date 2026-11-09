@@ -1,0 +1,78 @@
+{
+  "Rupt Function": {
+    "prefix": "fn",
+    "body": [
+      "${1:name}(${2:params}):",
+      "\t${3:# body}"
+    ],
+    "description": "Rupt function definition"
+  },
+  "Rupt Class": {
+    "prefix": "class",
+    "body": [
+      "class ${1:Name}:",
+      "\t${2:# body}"
+    ],
+    "description": "Rupt class definition"
+  },
+  "Rupt If": {
+    "prefix": "if",
+    "body": [
+      "if ${1:condition}:",
+      "\t${2:# body}"
+    ],
+    "description": "Rupt if statement"
+  },
+  "Rupt For": {
+    "prefix": "for",
+    "body": [
+      "for ${1:item} in ${2:iterable}:",
+      "\t${3:# body}"
+    ],
+    "description": "Rupt for loop"
+  },
+  "Rupt While": {
+    "prefix": "while",
+    "body": [
+      "while ${1:condition}:",
+      "\t${2:# body}"
+    ],
+    "description": "Rupt while loop"
+  },
+  "Rupt Try Except": {
+    "prefix": "try",
+    "body": [
+      "try:",
+      "\t${1:# body}",
+      "except ${2:Exception} as ${3:e}:",
+      "\t\t${4:# handle}"
+    ],
+    "description": "Rupt try/except"
+  },
+  "Rupt Async Fn": {
+    "prefix": "asyncfn",
+    "body": [
+      "async ${1:name}(${2:params}):",
+      "\t${3:# body}"
+    ],
+    "description": "Rupt async function"
+  },
+  "Rupt Print": {
+    "prefix": "print",
+    "body": [
+      "print(${1:message})"
+    ],
+    "description": "Rupt print"
+  },
+  "Rupt Match": {
+    "prefix": "match",
+    "body": [
+      "match ${1:subject}:",
+      "\tcase ${2:pattern}:",
+      "\t\t${3:# body}",
+      "\tcase _:",
+      "\t\t${4:# default}"
+    ],
+    "description": "Rupt match statement"
+  }
+}

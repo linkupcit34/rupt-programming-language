@@ -8,6 +8,35 @@ enum { SIG_NONE, SIG_RETURN, SIG_BREAK, SIG_CONTINUE, SIG_EXCEPTION };
 
 static Frame *FR = NULL; // current frame pointer passed around
 
+// graphics state
+static int gfx_w = 0, gfx_h = 0;
+static unsigned char *gfx_buf = NULL;
+static unsigned char gfx_r = 0, gfx_g = 0, gfx_b = 0;
+
+static void gfx_alloc(int w, int h) {
+    if (gfx_buf) free(gfx_buf);
+    gfx_w = w; gfx_h = h;
+    gfx_buf = (unsigned char *)calloc((size_t)w * (size_t)h * 3, 1);
+}
+static void gfx_set_pixel(int x, int y) {
+    if (x < 0 || y < 0 || x >= gfx_w || y >= gfx_h || !gfx_buf) return;
+    size_t i = ((size_t)y * (size_t)gfx_w + (size_t)x) * 3;
+    gfx_buf[i] = gfx_r; gfx_buf[i + 1] = gfx_g; gfx_buf[i + 2] = gfx_b;
+}
+static unsigned char hex_nib(char c) {
+    if (c >= '0' && c <= '9') return c - '0';
+    if (c >= 'a' && c <= 'f') return c - 'a' + 10;
+    if (c >= 'A' && c <= 'F') return c - 'A' + 10;
+    return 0;
+}
+static void gfx_parse_hex(const char *s) {
+    const char *p = s;
+    if (*p == '#') p++;
+    gfx_r = (hex_nib(p[0]) << 4) | hex_nib(p[1]);
+    gfx_g = (hex_nib(p[2]) << 4) | hex_nib(p[3]);
+    gfx_b = (hex_nib(p[4]) << 4) | hex_nib(p[5]);
+}
+
 // forward
 static Value *eval_expr(ASTNode *node, Env *env);
 static int exec_stmt(ASTNode *node, Env *env, Frame *fr);
@@ -87,7 +116,7 @@ static Value *eval_expr(ASTNode *node, Env *env) {
         case N_IDENT: {
             Value *v = env_get(env, node->sval);
             if (!v) {
-                if (strcmp(node->sval,"print")==0 || strcmp(node->sval,"range")==0 || strcmp(node->sval,"len")==0 || strcmp(node->sval,"int")==0 || strcmp(node->sval,"float")==0 || strcmp(node->sval,"str")==0 || strcmp(node->sval,"bool")==0 || strcmp(node->sval,"list")==0 || strcmp(node->sval,"input")==0 || strcmp(node->sval,"time_now")==0 || strcmp(node->sval,"sleep_ms")==0 || strcmp(node->sval,"visible")==0 || strcmp(node->sval,"toilet")==0 || strcmp(node->sval,"sum")==0 || strcmp(node->sval,"min")==0 || strcmp(node->sval,"max")==0 || strcmp(node->sval,"sorted")==0 || strcmp(node->sval,"reversed")==0 || strcmp(node->sval,"enumerate")==0 || strcmp(node->sval,"zip")==0 || strcmp(node->sval,"all")==0 || strcmp(node->sval,"any")==0 || strcmp(node->sval,"abs")==0) {
+                if (strcmp(node->sval,"print")==0 || strcmp(node->sval,"range")==0 || strcmp(node->sval,"len")==0 || strcmp(node->sval,"int")==0 || strcmp(node->sval,"float")==0 || strcmp(node->sval,"str")==0 || strcmp(node->sval,"bool")==0 || strcmp(node->sval,"list")==0 || strcmp(node->sval,"input")==0 || strcmp(node->sval,"time_now")==0 || strcmp(node->sval,"sleep_ms")==0 || strcmp(node->sval,"visible")==0 || strcmp(node->sval,"toilet")==0 || strcmp(node->sval,"sum")==0 || strcmp(node->sval,"min")==0 || strcmp(node->sval,"max")==0 || strcmp(node->sval,"sorted")==0 || strcmp(node->sval,"reversed")==0 || strcmp(node->sval,"enumerate")==0 || strcmp(node->sval,"zip")==0 || strcmp(node->sval,"all")==0 || strcmp(node->sval,"any")==0 || strcmp(node->sval,"abs")==0 || strcmp(node->sval,"gfx_init")==0 || strcmp(node->sval,"gfx_clear")==0 || strcmp(node->sval,"gfx_color")==0 || strcmp(node->sval,"gfx_pixel")==0 || strcmp(node->sval,"gfx_line")==0 || strcmp(node->sval,"gfx_rect")==0 || strcmp(node->sval,"gfx_draw_rect")==0 || strcmp(node->sval,"gfx_circle")==0 || strcmp(node->sval,"gfx_draw_circle")==0 || strcmp(node->sval,"gfx_fill_rect")==0 || strcmp(node->sval,"gfx_fill_circle")==0 || strcmp(node->sval,"gfx_show")==0 || strcmp(node->sval,"gfx_save")==0 || strcmp(node->sval,"gfx_close")==0) {
                     return val_null();
                 }
                 fprintf(stderr, "NameError: %s is not defined\n", node->sval);
@@ -464,6 +493,55 @@ static Value *eval_expr(ASTNode *node, Env *env) {
     } else {
         result = val_int(0);
     }
+} else if (strcmp(fname,"gfx_init")==0) {
+    if (argc >= 2 && args[0]->type == VAL_INT && args[1]->type == VAL_INT) gfx_alloc((int)args[0]->as.integer, (int)args[1]->as.integer);
+    result = val_null();
+} else if (strcmp(fname,"gfx_clear")==0) {
+    if (gfx_buf) memset(gfx_buf, 0, (size_t)gfx_w * (size_t)gfx_h * 3);
+    result = val_null();
+} else if (strcmp(fname,"gfx_color")==0) {
+    if (argc == 1 && args[0]->type == VAL_STR) gfx_parse_hex(args[0]->as.string);
+    result = val_null();
+} else if (strcmp(fname,"gfx_pixel")==0) {
+    if (argc == 3 && args[0]->type == VAL_INT && args[1]->type == VAL_INT && args[2]->type == VAL_INT) gfx_set_pixel((int)args[0]->as.integer, (int)args[1]->as.integer);
+    result = val_null();
+} else if (strcmp(fname,"gfx_line")==0) {
+    if (argc == 5 && args[0]->type == VAL_INT && args[1]->type == VAL_INT && args[2]->type == VAL_INT && args[3]->type == VAL_INT) {
+        int x0=(int)args[0]->as.integer, y0=(int)args[1]->as.integer, x1=(int)args[2]->as.integer, y1=(int)args[3]->as.integer;
+        int dx=abs(x1-x0), dy=-abs(y1-y0), sx=x0<x1?1:-1, sy=y0<y1?1:-1, err=dx+dy;
+        for(;;){ gfx_set_pixel(x0,y0); if(x0==x1&&y0==y1)break; int e2=2*err; if(e2>=dy){err+=dy;x0+=sx;} if(e2<=dx){err+=dx;y0+=sy;} }
+    }
+    result = val_null();
+} else if (strcmp(fname,"gfx_rect")==0 || strcmp(fname,"gfx_draw_rect")==0 || strcmp(fname,"gfx_fill_rect")==0) {
+    if (argc == 6 && args[0]->type==VAL_INT&&args[1]->type==VAL_INT&&args[2]->type==VAL_INT&&args[3]->type==VAL_INT&&args[4]->type==VAL_INT) {
+        int x=(int)args[0]->as.integer,y=(int)args[1]->as.integer,w=(int)args[2]->as.integer,h=(int)args[3]->as.integer;
+        for(int yy=y;yy<y+h;yy++) for(int xx=x;xx<x+w;xx++) gfx_set_pixel(xx,yy);
+    }
+    result = val_null();
+} else if (strcmp(fname,"gfx_circle")==0 || strcmp(fname,"gfx_fill_circle")==0 || strcmp(fname,"gfx_draw_circle")==0) {
+    if (argc == 3 && args[0]->type==VAL_INT&&args[1]->type==VAL_INT&&args[2]->type==VAL_INT) {
+        int x0=(int)args[0]->as.integer,y0=(int)args[1]->as.integer,r=(int)args[2]->as.integer;
+        for(int dy=-r;dy<=r;dy++) for(int dx=-r;dx<=r;dx++) if(dx*dx+dy*dy<=r*r) gfx_set_pixel(x0+dx,y0+dy);
+    }
+    result = val_null();
+} else if (strcmp(fname,"gfx_show")==0) {
+    if (gfx_buf) {
+        for (int y=0;y<gfx_h;y++){ for(int x=0;x<gfx_w;x++){ size_t i=((size_t)y*(size_t)gfx_w+(size_t)x)*3; unsigned char r=gfx_buf[i],g=gfx_buf[i+1],b=gfx_buf[i+2]; putchar(r||g||b?'#':'.'); } putchar('\n'); }
+    }
+    result = val_null();
+} else if (strcmp(fname,"gfx_save")==0) {
+    if (argc == 1 && args[0]->type == VAL_STR && gfx_buf) {
+        FILE *f = fopen(args[0]->as.string, "wb");
+        if (f) {
+            fprintf(f, "P6\n%d %d\n255\n", gfx_w, gfx_h);
+            fwrite(gfx_buf, 1, (size_t)gfx_w*(size_t)gfx_h*3, f);
+            fclose(f);
+        }
+    }
+    result = val_null();
+} else if (strcmp(fname,"gfx_close")==0) {
+    if (gfx_buf) { free(gfx_buf); gfx_buf=NULL; gfx_w=gfx_h=0; }
+    result = val_null();
 } else if (strcmp(fname,"range")==0) {
                     long long start=0,end=0,step=1;
                     if (argc==1) { end = (args[0]->type==VAL_INT)?args[0]->as.integer:(long long)args[0]->as.floating; }

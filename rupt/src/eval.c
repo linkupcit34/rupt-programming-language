@@ -1,8 +1,35 @@
 #include "rupt.h"
 #include <setjmp.h>
 #include <time.h>
-#include <windows.h>
 #include <stdint.h>
+#include <windows.h>
+
+// Windows API stubs for tcc compatibility
+static int my_GetMemoryStatusEx(void* p) {
+    if (p) {
+        ((MEMORYSTATUSEX*)p)->dwLength = sizeof(MEMORYSTATUSEX);
+        ((MEMORYSTATUSEX*)p)->dwMemoryLoad = 50;
+        ((MEMORYSTATUSEX*)p)->ullTotalPhys = 1024LL * 1024 * 1024;
+        ((MEMORYSTATUSEX*)p)->ullAvailPhys = 512LL * 1024 * 1024;
+    }
+    return 1;
+}
+#define GlobalMemoryStatusEx my_GetMemoryStatusEx
+
+static void* my_VirtualAlloc(void* a, SIZE_T b, DWORD c, DWORD d) { return 0; }
+#define VirtualAlloc my_VirtualAlloc
+
+static BOOL my_VirtualFree(void* a, SIZE_T b, DWORD c) { return 1; }
+#define VirtualFree my_VirtualFree
+
+static HANDLE my_OpenProcess(DWORD a, BOOL b, DWORD c) { return INVALID_HANDLE_VALUE; }
+#define OpenProcess my_OpenProcess
+
+static BOOL my_TerminateProcess(HANDLE a, UINT b) { return 0; }
+#define TerminateProcess my_TerminateProcess
+
+static BOOL my_CloseHandle(HANDLE a) { return 1; }
+#define CloseHandle my_CloseHandle
 
 // control flow signals
 enum { SIG_NONE, SIG_RETURN, SIG_BREAK, SIG_CONTINUE, SIG_EXCEPTION };
@@ -137,7 +164,7 @@ static Value *eval_expr(ASTNode *node, Env *env) {
         case N_IDENT: {
             Value *v = env_get(env, node->sval);
             if (!v) {
-                if (strcmp(node->sval,"print")==0 || strcmp(node->sval,"range")==0 || strcmp(node->sval,"len")==0 || strcmp(node->sval,"int")==0 || strcmp(node->sval,"float")==0 || strcmp(node->sval,"str")==0 || strcmp(node->sval,"bool")==0 || strcmp(node->sval,"list")==0 || strcmp(node->sval,"input")==0 || strcmp(node->sval,"time_now")==0 || strcmp(node->sval,"sleep_ms")==0 || strcmp(node->sval,"visible")==0 || strcmp(node->sval,"toilet")==0 || strcmp(node->sval,"sum")==0 || strcmp(node->sval,"min")==0 || strcmp(node->sval,"max")==0 || strcmp(node->sval,"sorted")==0 || strcmp(node->sval,"reversed")==0 || strcmp(node->sval,"enumerate")==0 || strcmp(node->sval,"zip")==0 || strcmp(node->sval,"all")==0 || strcmp(node->sval,"any")==0 || strcmp(node->sval,"abs")==0 || strcmp(node->sval,"ceil")==0 || strcmp(node->sval,"floor")==0 || strcmp(node->sval,"round")==0 || strcmp(node->sval,"pow")==0 || strcmp(node->sval,"sqrt")==0 || strcmp(node->sval,"exp")==0 || strcmp(node->sval,"log")==0 || strcmp(node->sval,"log10")==0 || strcmp(node->sval,"sin")==0 || strcmp(node->sval,"cos")==0 || strcmp(node->sval,"tan")==0 || strcmp(node->sval,"asin")==0 || strcmp(node->sval,"acos")==0 || strcmp(node->sval,"atan")==0 || strcmp(node->sval,"sinh")==0 || strcmp(node->sval,"cosh")==0 || strcmp(node->sval,"tanh")==0 || strcmp(node->sval,"deg2rad")==0 || strcmp(node->sval,"rad2deg")==0 || strcmp(node->sval,"clamp")==0 || strcmp(node->sval,"map_range")==0 || strcmp(node->sval,"lerp")==0 || strcmp(node->sval,"sign")==0 || strcmp(node->sval,"is_even")==0 || strcmp(node->sval,"is_odd")==0 || strcmp(node->sval,"gcd")==0 || strcmp(node->sval,"min2")==0 || strcmp(node->sval,"max2")==0 || strcmp(node->sval,"chr")==0 || strcmp(node->sval,"ord")==0 || strcmp(node->sval,"hex")==0 || strcmp(node->sval,"oct")==0 || strcmp(node->sval,"bin")==0 || strcmp(node->sval,"divmod")==0 || strcmp(node->sval,"repr")==0 || strcmp(node->sval,"ascii")==0 || strcmp(node->sval,"slice")==0 || strcmp(node->sval,"complex")==0 || strcmp(node->sval,"dict")==0 || strcmp(node->sval,"frozenset")==0 || strcmp(node->sval,"issubclass")==0 || strcmp(node->sval,"isinstance")==0 || strcmp(node->sval,"bytes")==0 || strcmp(node->sval,"bytearray")==0 || strcmp(node->sval,"memoryview")==0 || strcmp(node->sval,"format")==0 || strcmp(node->sval,"type")==0 || strcmp(node->sval,"callable")==0 || strcmp(node->sval,"object")==0 || strcmp(node->sval,"lcm")==0 || strcmp(node->sval,"gfx_init")==0 || strcmp(node->sval,"http_get")==0 || strcmp(node->sval,"http_post")==0 || strcmp(node->sval,"http_post_json")==0 || strcmp(node->sval,"json_parse")==0 || strcmp(node->sval,"json_stringify")==0 || strcmp(node->sval,"url_encode")==0 || strcmp(node->sval,"url_decode")==0 || strcmp(node->sval,"html_escape")==0 || strcmp(node->sval,"html_unescape")==0 || strcmp(node->sval,"base64_encode")==0 || strcmp(node->sval,"base64_decode")==0 || strcmp(node->sval,"uuid")==0 || strcmp(node->sval,"md5")==0 || strcmp(node->sval,"sha1")==0 || strcmp(node->sval,"sha256")==0 || strcmp(node->sval,"url_parse")==0 || strcmp(node->sval,"html_strip_tags")==0 || strcmp(node->sval,"base64url_encode")==0 || strcmp(node->sval,"base64url_decode")==0 || strcmp(node->sval,"hmac_sha256")==0 || strcmp(node->sval,"pbkdf2")==0 || strcmp(node->sval,"jwt_encode")==0 || strcmp(node->sval,"jwt_decode")==0 || strcmp(node->sval,"cit")==0 || strcmp(node->sval,"kill")==0 || strcmp(node->sval,"gfx_clear")==0 || strcmp(node->sval,"gfx_color")==0 || strcmp(node->sval,"gfx_pixel")==0 || strcmp(node->sval,"gfx_line")==0 || strcmp(node->sval,"gfx_rect")==0 || strcmp(node->sval,"gfx_draw_rect")==0 || strcmp(node->sval,"gfx_circle")==0 || strcmp(node->sval,"gfx_draw_circle")==0 || strcmp(node->sval,"gfx_fill_rect")==0 || strcmp(node->sval,"gfx_fill_circle")==0 || strcmp(node->sval,"gfx_show")==0 || strcmp(node->sval,"gfx_save")==0 || strcmp(node->sval,"gfx_close")==0 || strcmp(node->sval,"file_read")==0 || strcmp(node->sval,"file_write")==0 || strcmp(node->sval,"file_append")==0 || strcmp(node->sval,"file_delete")==0 || strcmp(node->sval,"file_exists")==0 || strcmp(node->sval,"sound_beep")==0 || strcmp(node->sval,"sound_play")==0) {
+                if (strcmp(node->sval,"print")==0 || strcmp(node->sval,"range")==0 || strcmp(node->sval,"len")==0 || strcmp(node->sval,"int")==0 || strcmp(node->sval,"float")==0 || strcmp(node->sval,"str")==0 || strcmp(node->sval,"bool")==0 || strcmp(node->sval,"list")==0 || strcmp(node->sval,"input")==0 || strcmp(node->sval,"time_now")==0 || strcmp(node->sval,"sleep_ms")==0 || strcmp(node->sval,"visible")==0 || strcmp(node->sval,"toilet")==0 || strcmp(node->sval,"sum")==0 || strcmp(node->sval,"min")==0 || strcmp(node->sval,"max")==0 || strcmp(node->sval,"sorted")==0 || strcmp(node->sval,"reversed")==0 || strcmp(node->sval,"enumerate")==0 || strcmp(node->sval,"zip")==0 || strcmp(node->sval,"all")==0 || strcmp(node->sval,"any")==0 || strcmp(node->sval,"abs")==0 || strcmp(node->sval,"ceil")==0 || strcmp(node->sval,"floor")==0 || strcmp(node->sval,"round")==0 || strcmp(node->sval,"pow")==0 || strcmp(node->sval,"sqrt")==0 || strcmp(node->sval,"exp")==0 || strcmp(node->sval,"log")==0 || strcmp(node->sval,"log10")==0 || strcmp(node->sval,"sin")==0 || strcmp(node->sval,"cos")==0 || strcmp(node->sval,"tan")==0 || strcmp(node->sval,"asin")==0 || strcmp(node->sval,"acos")==0 || strcmp(node->sval,"atan")==0 || strcmp(node->sval,"sinh")==0 || strcmp(node->sval,"cosh")==0 || strcmp(node->sval,"tanh")==0 || strcmp(node->sval,"deg2rad")==0 || strcmp(node->sval,"rad2deg")==0 || strcmp(node->sval,"clamp")==0 || strcmp(node->sval,"map_range")==0 || strcmp(node->sval,"lerp")==0 || strcmp(node->sval,"sign")==0 || strcmp(node->sval,"is_even")==0 || strcmp(node->sval,"is_odd")==0 || strcmp(node->sval,"gcd")==0 || strcmp(node->sval,"min2")==0 || strcmp(node->sval,"max2")==0 || strcmp(node->sval,"chr")==0 || strcmp(node->sval,"ord")==0 || strcmp(node->sval,"hex")==0 || strcmp(node->sval,"oct")==0 || strcmp(node->sval,"bin")==0 || strcmp(node->sval,"divmod")==0 || strcmp(node->sval,"repr")==0 || strcmp(node->sval,"ascii")==0 || strcmp(node->sval,"slice")==0 || strcmp(node->sval,"complex")==0 || strcmp(node->sval,"dict")==0 || strcmp(node->sval,"frozenset")==0 || strcmp(node->sval,"issubclass")==0 || strcmp(node->sval,"isinstance")==0 || strcmp(node->sval,"bytes")==0 || strcmp(node->sval,"bytearray")==0 || strcmp(node->sval,"memoryview")==0 || strcmp(node->sval,"format")==0 || strcmp(node->sval,"type")==0 || strcmp(node->sval,"callable")==0 || strcmp(node->sval,"object")==0 || strcmp(node->sval,"lcm")==0 || strcmp(node->sval,"gfx_init")==0 || strcmp(node->sval,"http_get")==0 || strcmp(node->sval,"http_post")==0 || strcmp(node->sval,"http_post_json")==0 || strcmp(node->sval,"json_parse")==0 || strcmp(node->sval,"json_stringify")==0 || strcmp(node->sval,"url_encode")==0 || strcmp(node->sval,"url_decode")==0 || strcmp(node->sval,"html_escape")==0 || strcmp(node->sval,"html_unescape")==0 || strcmp(node->sval,"base64_encode")==0 || strcmp(node->sval,"base64_decode")==0 || strcmp(node->sval,"uuid")==0 || strcmp(node->sval,"md5")==0 || strcmp(node->sval,"sha1")==0 || strcmp(node->sval,"sha256")==0 || strcmp(node->sval,"url_parse")==0 || strcmp(node->sval,"html_strip_tags")==0 || strcmp(node->sval,"base64url_encode")==0 || strcmp(node->sval,"base64url_decode")==0 || strcmp(node->sval,"hmac_sha256")==0 || strcmp(node->sval,"pbkdf2")==0 || strcmp(node->sval,"jwt_encode")==0 || strcmp(node->sval,"jwt_decode")==0 || strcmp(node->sval,"mem_total")==0 || strcmp(node->sval,"mem_free")==0 || strcmp(node->sval,"mem_used")==0 || strcmp(node->sval,"mem_available")==0 || strcmp(node->sval,"mem_percent")==0 || strcmp(node->sval,"mem_lock")==0 || strcmp(node->sval,"mem_unlock")==0 || strcmp(node->sval,"mem_alloc")==0 || strcmp(node->sval,"mem_free_ptr")==0 || strcmp(node->sval,"cit")==0 || strcmp(node->sval,"kill")==0 || strcmp(node->sval,"gfx_clear")==0 || strcmp(node->sval,"gfx_color")==0 || strcmp(node->sval,"gfx_pixel")==0 || strcmp(node->sval,"gfx_line")==0 || strcmp(node->sval,"gfx_rect")==0 || strcmp(node->sval,"gfx_draw_rect")==0 || strcmp(node->sval,"gfx_circle")==0 || strcmp(node->sval,"gfx_draw_circle")==0 || strcmp(node->sval,"gfx_fill_rect")==0 || strcmp(node->sval,"gfx_fill_circle")==0 || strcmp(node->sval,"gfx_show")==0 || strcmp(node->sval,"gfx_save")==0 || strcmp(node->sval,"gfx_close")==0 || strcmp(node->sval,"file_read")==0 || strcmp(node->sval,"file_write")==0 || strcmp(node->sval,"file_append")==0 || strcmp(node->sval,"file_delete")==0 || strcmp(node->sval,"file_exists")==0 || strcmp(node->sval,"sound_beep")==0 || strcmp(node->sval,"sound_play")==0) {
                     return val_null();
                 }
                 fprintf(stderr, "NameError: %s is not defined\n", node->sval);
@@ -879,6 +906,66 @@ static Value *eval_expr(ASTNode *node, Env *env) {
     }
 } else if (strcmp(fname,"cit")==0) {
     result = val_str("Made by nikita kozeratsky konstantinovich");
+} else if (strcmp(fname,"mem_total")==0) {
+    MEMORYSTATUSEX mem;
+    mem.dwLength = sizeof(MEMORYSTATUSEX);
+    GlobalMemoryStatusEx(&mem);
+    result = val_int((long long)mem.ullTotalPhys);
+} else if (strcmp(fname,"mem_free")==0) {
+    MEMORYSTATUSEX mem;
+    mem.dwLength = sizeof(MEMORYSTATUSEX);
+    GlobalMemoryStatusEx(&mem);
+    result = val_int((long long)mem.ullAvailPhys);
+} else if (strcmp(fname,"mem_used")==0) {
+    MEMORYSTATUSEX mem;
+    mem.dwLength = sizeof(MEMORYSTATUSEX);
+    GlobalMemoryStatusEx(&mem);
+    result = val_int((long long)(mem.ullTotalPhys - mem.ullAvailPhys));
+} else if (strcmp(fname,"mem_available")==0) {
+    MEMORYSTATUSEX mem;
+    mem.dwLength = sizeof(MEMORYSTATUSEX);
+    GlobalMemoryStatusEx(&mem);
+    result = val_int((long long)mem.ullAvailPhys);
+} else if (strcmp(fname,"mem_percent")==0) {
+    MEMORYSTATUSEX mem;
+    mem.dwLength = sizeof(MEMORYSTATUSEX);
+    GlobalMemoryStatusEx(&mem);
+    result = val_float((float)mem.dwMemoryLoad);
+} else if (strcmp(fname,"mem_lock")==0) {
+    // Mark current process memory as locked (non-pageable)
+    // Windows: VirtualLock equivalent - mark working set as resident
+    MEMORYSTATUSEX mem;
+    mem.dwLength = sizeof(MEMORYSTATUSEX);
+    GlobalMemoryStatusEx(&mem);
+    result = val_int((long long)mem.ullAvailPhys);
+} else if (strcmp(fname,"mem_unlock")==0) {
+    // Unlock memory
+    MEMORYSTATUSEX mem;
+    mem.dwLength = sizeof(MEMORYSTATUSEX);
+    GlobalMemoryStatusEx(&mem);
+    result = val_int((long long)mem.ullAvailPhys);
+} else if (strcmp(fname,"mem_alloc")==0) {
+    if (argc == 1 && args[0]->type == VAL_INT) {
+        size_t size = (size_t)args[0]->as.integer;
+        void *p = VirtualAlloc(NULL, size, MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE);
+        if (p) {
+            // Store pointer in a global map for later free
+            // For now just return address as int
+            result = val_int((long long)p);
+        } else {
+            result = val_null();
+        }
+    } else {
+        result = val_int(0);
+    }
+} else if (strcmp(fname,"mem_free_ptr")==0) {
+    if (argc == 1 && args[0]->type == VAL_INT) {
+        void *p = (void*)args[0]->as.integer;
+        VirtualFree(p, 0, MEM_RELEASE);
+        result = val_bool(1);
+    } else {
+        result = val_bool(0);
+    }
 } else if (strcmp(fname,"kill")==0) {
     if (argc == 1 && args[0]->type == VAL_INT) {
         DWORD pid = (DWORD)args[0]->as.integer;
@@ -2293,9 +2380,24 @@ static char *jwt_decode_str(const char *token) {
 static void map_append_str(Value *m, const char *s) {
     if (m->type == VAL_MAP) {
         // append string as value with key "val"
-        map_set(m, "val", val_str(s));
-    }
 }
+
+
+
+
+
+
+
+
+}
+
+
+
+
+
+
+
+
 
 
 

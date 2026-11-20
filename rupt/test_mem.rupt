@@ -1,0 +1,11 @@
+rupt
+visible(mem_total())
+visible(mem_free())
+visible(mem_used())
+visible(mem_available())
+visible(mem_percent())
+visible(mem_lock())
+visible(mem_unlock())
+visible(mem_alloc(1024))
+visible(mem_free_ptr(4096))
+print("done")
